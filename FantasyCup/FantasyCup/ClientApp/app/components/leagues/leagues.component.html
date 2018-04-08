@@ -1,0 +1,25 @@
+﻿<div class="col-md-6 col-md-offset-3">
+    <h3>My leagues:</h3>
+    <table>
+        <tr *ngFor="let league of leagues">
+            <td>
+                {{league.name}}
+            </td>
+            <td>
+                <button type="button" class="btn btn-default">
+                    <span class="glyphicon glyphicon-stats" data-toggle="tooltip" title="Standings"></span>
+                </button>
+                <button type="button" class="btn btn-default" (click)="manage(league.id)">
+                    <span class="glyphicon glyphicon-cog" data-toggle="tooltip" title="Manage"></span>
+                </button>
+                <button type="button" class="btn btn-default" (click)="leave(league.id)">
+                    <span class="glyphicon glyphicon-log-out" data-toggle="tooltip" title="Leave"></span>
+                </button>
+            </td>
+        </tr>
+    </table>
+    <div class="btn-group" role="group">
+        <button type="button" class="btn btn-secondary">Create League</button>
+        <button type="button" class="btn btn-secondary">Join League</button>
+    </div>
+</div>

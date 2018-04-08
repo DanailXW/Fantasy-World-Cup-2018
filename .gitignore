@@ -1,0 +1,5 @@
+*.config
+*.suo
+FantasyCup/.vs/
+FantasyCup/FantasyCup/appsettings.Development.json
+FantasyCup/FantasyCup/appsettings.json
