@@ -25,6 +25,8 @@
 
   <ItemGroup>
     <None Remove="ClientApp\app\app.config.ts" />
+    <None Remove="ClientApp\app\components\bet\gamebets.component.ts" />
+    <None Remove="ClientApp\app\components\bet\index.ts" />
     <None Remove="ClientApp\app\components\leagues\createleague.component.ts" />
     <None Remove="ClientApp\app\components\leagues\index.ts" />
     <None Remove="ClientApp\app\components\leagues\joinleague.component.ts" />
@@ -32,12 +34,14 @@
     <None Remove="ClientApp\app\components\leagues\manageleague.component.ts" />
     <None Remove="ClientApp\app\components\login\login.component.ts" />
     <None Remove="ClientApp\app\components\register\register.component.ts" />
+    <None Remove="ClientApp\app\models\gamebet.ts" />
     <None Remove="ClientApp\app\models\index.ts" />
     <None Remove="ClientApp\app\models\league.ts" />
     <None Remove="ClientApp\app\models\leaguemember.ts" />
     <None Remove="ClientApp\app\models\user.ts" />
     <None Remove="ClientApp\app\services\alert.service.ts" />
     <None Remove="ClientApp\app\services\authentication.service.ts" />
+    <None Remove="ClientApp\app\services\bet.service.ts" />
     <None Remove="ClientApp\app\services\index.ts" />
     <None Remove="ClientApp\app\services\league.service.ts" />
     <None Remove="ClientApp\app\services\user.service.ts" />
@@ -45,6 +49,8 @@
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\app\app.config.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\bet\gamebets.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\bet\index.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\leagues\createleague.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\leagues\index.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\leagues\joinleague.component.ts" />
@@ -52,12 +58,14 @@
     <TypeScriptCompile Include="ClientApp\app\components\leagues\manageleague.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\login\login.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\register\register.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\models\gamebet.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\index.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\league.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\leaguemember.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\user.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\alert.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\authentication.service.ts" />
+    <TypeScriptCompile Include="ClientApp\app\services\bet.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\index.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\league.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\user.service.ts" />

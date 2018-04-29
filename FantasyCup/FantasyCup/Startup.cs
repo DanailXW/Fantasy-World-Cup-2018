@@ -30,7 +30,7 @@ namespace FantasyCup
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(options => { options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore; });
             services.AddAutoMapper();
             services.AddCors();
 
@@ -63,6 +63,8 @@ namespace FantasyCup
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ILeagueService, LeagueService>();
+            services.AddScoped<IBetService, BetService>();
+            services.AddScoped<ICompetitionService, CompetitionService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

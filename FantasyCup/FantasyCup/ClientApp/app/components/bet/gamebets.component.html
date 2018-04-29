@@ -1,0 +1,27 @@
+﻿<div class="col-md-6 col-md-offset-3">
+    <h3>Games:</h3>
+    <form name="form" (ngSubmit)="saveBets()" novalidate>
+        <table>
+            <tr *ngFor="let game of games; let i = index">
+                <td>
+                    {{game.startDate}}
+                </td>
+                <td>
+                    {{game.teamA}}
+                </td>
+                <td>
+                    <input type="number" name="scoreA-{{game.id}}" [(ngModel)]="game.scoreA" (change)="rowChanged(i)">
+                </td>
+                <td>
+                    <input type="number" name="scoreB-{{game.id}}" [(ngModel)]="game.scoreB" (change)="rowChanged(i)"/>
+                </td>
+                <td>
+                    {{game.teamB}}
+                </td>
+            </tr>
+        </table>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+    </form>
+</div>

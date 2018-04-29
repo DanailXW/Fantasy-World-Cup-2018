@@ -14,8 +14,9 @@ import { CounterComponent } from './components/counter/counter.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LeaguesComponent, CreateLeagueComponent, JoinLeagueComponent, ManageLeagueComponent } from './components/leagues/index';
+import { GameBetsComponent } from './components/bet/index';
 
-import { AuthenticationService, AlertService, UserService, LeagueService } from './services/index';
+import { AuthenticationService, AlertService, UserService, LeagueService, BetService } from './services/index';
 
 @NgModule({
     declarations: [
@@ -29,7 +30,8 @@ import { AuthenticationService, AlertService, UserService, LeagueService } from 
         LeaguesComponent,
         CreateLeagueComponent,
         JoinLeagueComponent,
-        ManageLeagueComponent
+        ManageLeagueComponent,
+        GameBetsComponent
     ],
     imports: [
         CommonModule,
@@ -45,7 +47,8 @@ import { AuthenticationService, AlertService, UserService, LeagueService } from 
             { path: 'leagues', component: LeaguesComponent },
             { path: 'league/create', component: CreateLeagueComponent },
             { path: 'league/join', component: JoinLeagueComponent },
-            { path: 'league/manage/:id', component: ManageLeagueComponent }
+            { path: 'league/manage/:id', component: ManageLeagueComponent },
+            { path: 'bet/games', component: GameBetsComponent }
             //{ path: '**', redirectTo: 'home' }
         ])
     ],
@@ -54,7 +57,8 @@ import { AuthenticationService, AlertService, UserService, LeagueService } from 
         AlertService,
         AuthenticationService,
         UserService,
-        LeagueService
+        LeagueService,
+        BetService
     ]
 })
 export class AppModuleShared {
