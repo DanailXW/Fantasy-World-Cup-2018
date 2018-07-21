@@ -9,6 +9,7 @@ namespace FantasyCup.Model
         {
             GameUserBet = new HashSet<GameUserBet>();
             Result = new HashSet<Result>();
+            GameUserBetAssoc = new HashSet<GameUserBetAssoc>();
         }
 
         public int Id { get; set; }
@@ -16,11 +17,14 @@ namespace FantasyCup.Model
         public int TeamAid { get; set; }
         public int TeamBid { get; set; }
         public int StageId { get; set; }
+        public int StateId { get; set; }
 
         public Stage Stage { get; set; }
+        public GameState State { get; set; }
         public Team TeamA { get; set; }
         public Team TeamB { get; set; }
         public ICollection<GameUserBet> GameUserBet { get; set; }
         public ICollection<Result> Result { get; set; }
+        public ICollection<GameUserBetAssoc> GameUserBetAssoc { get; set; }
     }
 }

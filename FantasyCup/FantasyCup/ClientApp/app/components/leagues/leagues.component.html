@@ -1,25 +1,29 @@
-﻿<div class="col-md-6 col-md-offset-3">
+﻿<div class="container-fluid">
     <h3>My leagues:</h3>
-    <table>
-        <tr *ngFor="let league of leagues">
-            <td>
-                {{league.name}}
-            </td>
-            <td>
-                <button type="button" class="btn btn-default">
-                    <span class="glyphicon glyphicon-stats" data-toggle="tooltip" title="Standings"></span>
+    <hr class="my-1" style="margin-right: 45%;" />
+    <div *ngFor="let league of leagues">
+        <div class="row mb-2">
+            <div class="col-md-5">
+                <h5 *ngIf="league.league.id == defaultLeague?.id">{{league.league.name}}</h5>
+                <span *ngIf="league.league.id != defaultLeague?.id">{{league.league.name}}</span>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-info" (click)="standings(league.league.id)">
+                    <span class="fa fa-bar-chart" data-toggle="tooltip" title="Standings"></span>
                 </button>
-                <button type="button" class="btn btn-default" (click)="manage(league.id)">
-                    <span class="glyphicon glyphicon-cog" data-toggle="tooltip" title="Manage"></span>
+                <button *ngIf="league.league.id != defaultLeague?.id && league.isAdmin" type="button" class="btn btn-info" (click)="manage(league.league.id)">
+                    <span class="fa fa-cog" data-toggle="tooltip" title="Manage"></span>
                 </button>
-                <button type="button" class="btn btn-default" (click)="leave(league.id)">
-                    <span class="glyphicon glyphicon-log-out" data-toggle="tooltip" title="Leave"></span>
+                <button *ngIf="league.canLeave" type="button" class="btn btn-info" (click)="leave(league.league.id)">
+                    <span class="fa fa-sign-out" data-toggle="tooltip" title="Leave"></span>
                 </button>
-            </td>
-        </tr>
-    </table>
-    <div class="btn-group" role="group">
-        <button type="button" class="btn btn-secondary">Create League</button>
-        <button type="button" class="btn btn-secondary">Join League</button>
+            </div>
+        </div>
+        <hr class="my-1" style="margin-right: 45%;" />
+    </div>
+
+    <div class="mt-5">
+        <button type="button" class="btn btn-primary" (click)="create()">Create League</button>
+        <button type="button" class="btn btn-primary" (click)="join()">Join League</button>
     </div>
 </div>

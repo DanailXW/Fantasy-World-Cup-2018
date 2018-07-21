@@ -1,10 +1,72 @@
 <div class='container-fluid'>
-    <div class='row'>
-        <div class='col-sm-3'>
-            <nav-menu></nav-menu>
-        </div>
-        <div class='col-sm-9 body-content'>
+        <nav class="navbar navbar-light" style="background-color: #f5f8fa;">
+            <span></span>
+            <ul class="nav justify-content-end">
+                <li *ngIf="!(bLoggedIn$ | async)"  [routerLinkActive]="['link-active']" class="nav-item">
+                    <a [routerLink]="['/login']" class="nav-link active">
+                        Sign In
+                    </a>
+                </li>
+                <li *ngIf="!(bLoggedIn$ | async)" [routerLinkActive]="['link-active']" class="nav-item">
+                    <a [routerLink]="['/register']" class="nav-link active">
+                        Sign Up
+                    </a>
+                </li>
+                <li *ngIf="bLoggedIn$ | async" class="nav-item">
+                    <a class="nav-link active" href="javascript:void(0)" (click)="logout($event)">
+                        Sign Out
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <nav class="navbar navbar-light" style="background: url(/dist/assests/images/fwc_darkbluebg1.png) repeat;">
+            <div>
+                <span>
+                    <img wi src="../../../../wwwroot/dist/assests/images/fifa-world-cup-2018-logo-png-official-television-fifa-world-cup-2018-429.png" />
+                </span>
+            </div>
+            <nav class="navbar navbar-light">
+                <ul class="nav justify-content-end">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle innav" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Games</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="javascript:void(0)" (click)="navigate('GamesUpcoming')">Fixtures</a>
+                            <a class="dropdown-item" href="javascript:void(0)" (click)="navigate('GamesPast')">Results</a>
+                            <a class="dropdown-item" href="javascript:void(0)" (click)="navigate('GamesGroup')">Group Phase</a>
+                            <a class="dropdown-item" href="javascript:void(0)" (click)="navigate('GamesKnockout')">Knockout Phase</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle innav" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Stats</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="javascript:void(0)" (click)="navigate('GroupStandings')">Groups</a>
+                            <a class="dropdown-item" href="javascript:void(0)" (click)="navigate('TopScorers')">Top Scorers</a>
+                        </div>
+                    </li>
+                    <li *ngIf="bLoggedIn$ | async" class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle innav" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Predictions</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="javascript:void(0)" (click)="navigate('BetGames')">Games</a>
+                            <a class="dropdown-item" href="javascript:void(0)" (click)="navigate('BetSpecials')">Specials</a>
+                        </div>
+                    </li>
+                    <li *ngIf="bLoggedIn$ | async" class="nav-item">
+                        <a class="nav-link innav" href="javascript:void(0)" (click)="navigate('Leagues')">Leagues</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle innav" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="javascript:void(0)" (click)="navigate('Rules')">Rules</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+        </nav>
+    </div>
+
+
+    
+        <div class='body-content' style="padding-left:15px; padding-right: 15px;">
             <router-outlet></router-outlet>
         </div>
-    </div>
-</div>
+    

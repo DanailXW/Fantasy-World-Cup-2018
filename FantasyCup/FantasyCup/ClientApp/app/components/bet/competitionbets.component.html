@@ -1,0 +1,50 @@
+﻿<div class="col-md-12 mt-5">
+    <form name="form" (ngSubmit)="saveBets()" novalidate #cbForm="ngForm">
+        <div class="form-group col-md-4">
+            <label for="dropdownTeams" class="col-form-label">Champion</label>
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownTeams" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {{selectedTeam.name}}
+                    <span class="caret"></span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownTeams">
+                    <button *ngFor="let team of teams;" (click)="teamSelected(team)" 
+                            type="button" class="dropdown-item">
+                        {{team.name}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="dropdownPlayerTeams" class="col-form-label">Top Scorer</label>
+            <div class="dropdown ">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownPlayerTeams" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {{selectedPlayerTeam.name}}
+                    <span class="caret"></span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownPlayerTeams">
+                    <button *ngFor="let team of teams;" (click)="playerTeamSelected(team)"
+                            type="button" class="dropdown-item">
+                        {{team.name}}
+                    </button>
+                </div>
+            </div>
+
+            <div class="dropdown mt-2">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="dropdownPlayers" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    {{selectedPlayer.name}}
+                    <span class="caret"></span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownPlayers">
+                    <button *ngFor="let player of playersFiltered;" (click)="playerSelected(player)"
+                            type="button" class="dropdown-item">
+                        {{player.name}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-1">
+            <button type="submit" class="btn btn-primary" [disabled]="cbForm.pristine">Save</button>
+        </div>
+    </form>
+</div>

@@ -42,5 +42,49 @@ namespace FantasyCup.Controllers
 
             return Ok(playersDto);
         }
+
+        [HttpGet("{cid:int}/players")]
+        public IActionResult GetPlayers([FromRoute]int cid)
+        {
+            var players = _competitionService.GetPlayers(cid);
+            var playersDto = _mapper.Map<IList<PlayerDto>>(players);
+
+            return Ok(playersDto);
+        }
+
+        [HttpGet("{cid:int}/games")]
+        public IActionResult GetGames([FromRoute]int cid)
+        {
+            var games = _competitionService.GetGames(cid);
+            var gamesDto = _mapper.Map<IList<GameDto>>(games);
+
+            return Ok(gamesDto);
+        }
+
+        [HttpGet("{cid:int}/playerstats")]
+        public IActionResult GetPlayerStats([FromRoute]int cid)
+        {
+            var playerStats = _competitionService.GetPlayerStats(cid);
+            var playerStatsDto = _mapper.Map<IList<PlayerStatsDto>>(playerStats);
+
+            return Ok(playerStatsDto);
+        }
+
+        [HttpGet("{cid:int}/groupstandings")]
+        public IActionResult GetGroupStandings([FromRoute]int cid)
+        {
+            try
+            {
+                var standings = _competitionService.GetGroupStandings(cid);
+                var standingsDto = _mapper.Map<IList<GroupStandingsDto>>(standings);
+
+                return Ok(standingsDto);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+        }
     }
 }

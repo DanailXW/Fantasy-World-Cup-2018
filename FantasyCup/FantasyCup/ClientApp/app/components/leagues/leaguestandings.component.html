@@ -1,0 +1,41 @@
+﻿<table class="table table-bordered mt-2 table-hover table-sm">
+    <thead class="thead-light">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col" data-toggle="tooltip" title="Compared to previous matchday">+/-</th>
+            <th scope="col">Username</th>
+            <th scope="col">Points</th>
+            <th scope="col">Predicted Games</th>
+            <th scope="col">Correct Sign</th>
+            <th scope="col">Correct Score</th>
+            <th scope="col">Champion Points</th>
+            <th scope="col">Top Scorer Points</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let userScore of standings;" [ngClass]="{ 'table-primary': userScore.id == userId}">
+            <th scope="row">{{userScore.position}}</th>
+            <td>
+                <span *ngIf="userScore.previousPosition != null">
+                    <i *ngIf="userScore.previousPosition > userScore.position" class="fa fa-sort-up" style="color:green; vertical-align:bottom;"></i>
+                    <i *ngIf="userScore.previousPosition < userScore.position" class="fa fa-sort-down" style="color:red;"></i>
+                    <i *ngIf="userScore.previousPosition == userScore.position" class="fa fa-caret-left" style="color:lightblue;"></i>
+                    <i *ngIf="userScore.previousPosition == userScore.position" class="fa fa-caret-right" style="color:lightblue;"></i>
+                    <span *ngIf="userScore.previousPosition != userScore.position" class="small">
+                        {{(userScore.previousPosition > userScore.position ? 1 : -1)*(userScore.previousPosition - userScore.position)}}
+                    </span>
+                </span>
+                <span *ngIf="userScore.previousPosition == null">
+                    <i class="fa fa-plus-circle" style="color:dodgerblue;"></i>
+                </span>
+            </td>
+            <td>{{userScore.userName}}</td>
+            <td [ngClass]="{'notpaid': userScore.hasPotMoney && !userScore.paid}">{{userScore.points}}</td>
+            <td>{{userScore.countGames}}</td>
+            <td>{{userScore.countCorrectSign}}</td>
+            <td>{{userScore.countCorrectScore}}</td>
+            <td>{{userScore.championPoints}} ({{userScore.potentialChampionPoints}})</td>
+            <td>{{userScore.scorerPoints}} ({{userScore.potentialScorerPoints}})</td>
+        </tr>
+    </tbody>
+</table>

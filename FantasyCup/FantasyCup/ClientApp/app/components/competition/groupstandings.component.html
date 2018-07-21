@@ -1,0 +1,61 @@
+﻿<div class="container-fluid pl-5 pt-lg-3 pr-lg-5">
+    <!--<nav class="navbar navbar-light row position-fixed" style="background-color: #fff; border-bottom: solid 1px #eee; border-top:solid 1px #eee;">
+        <ul class="nav">
+            <li *ngFor="let group of groups; let i = index;" class="nav-item">
+                <a href="groupstandings#divGroup{{i*4}}">
+                    <span>{{group}}</span>
+                </a>                
+            </li>
+        </ul>
+    </nav>-->
+    <div *ngFor="let item of standings; let i = index;">
+        <div id="divGroup{{i}}" *ngIf="i == 0 || item.stage.name != standings[i - 1].stage.name" class="row mb-2 mt-5 p-1" style="background-color: #eee;">
+            <div class="col-sm-4">
+                <span>{{item.stage.name}}</span>
+            </div>
+            <span class="col-sm-1">MP</span>
+            <span class="col-sm-1">W</span>
+            <span class="col-sm-1">D</span>
+            <span class="col-sm-1">L</span>
+            <span class="col-sm-1">GF</span>
+            <span class="col-sm-1">GA</span>
+            <span class="col-sm-1">+/-</span>
+            <span class="col-sm-1">Pts</span>
+        </div>
+        <div class="row">
+            <div class="col-sm-1">
+                <span>
+                    <img src={{item.team.emblemPath}} />
+                </span>
+            </div>
+            <div class="col-sm-3">
+                <span>{{item.team.name}}</span>
+            </div>
+            <div class="col-sm-1">
+                <span>{{item.gamesPlayed}}</span>
+            </div>
+            <div class="col-sm-1">
+                <span>{{item.wins}}</span>
+            </div>
+            <div class="col-sm-1">
+                <span>{{item.draws}}</span>
+            </div>
+            <div class="col-sm-1">
+                <span>{{item.losses}}</span>
+            </div>
+            <div class="col-sm-1">
+                <span>{{item.goalsFor}}</span>
+            </div>
+            <div class="col-sm-1">
+                <span>{{item.goalsAgainst}}</span>
+            </div>
+            <div class="col-sm-1">
+                <span>{{item.goalsFor - item.goalsAgainst}}</span>
+            </div>
+            <div class="col-sm-1">
+                <span>{{item.points}}</span>
+            </div>
+        </div>
+        <hr class="my-1" />
+    </div>
+</div>

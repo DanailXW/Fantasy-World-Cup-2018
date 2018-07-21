@@ -30,11 +30,16 @@ namespace FantasyCup
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().AddJsonOptions(options => { options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore; });
+            services.AddMvc().AddJsonOptions(options => 
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+            });
+
             services.AddAutoMapper();
             services.AddCors();
 
-            var connection = @"Server=HOODAHELL-PC\MSSQL16;Database=FantasyCup;Trusted_Connection=True;ConnectRetryCount=0";
+            var connection = Configuration.GetConnectionString("DatabaseConnection");            
             services.AddDbContext<FantasyCupContext>(options => options.UseSqlServer(connection));
 
             var appSettingsSection = Configuration.GetSection("AppSettings");
@@ -57,7 +62,8 @@ namespace FantasyCup
                    ValidateIssuerSigningKey = true,
                    IssuerSigningKey = new SymmetricSecurityKey(key),
                    ValidateIssuer = false,
-                   ValidateAudience = false
+                   ValidateAudience = false,
+                   ClockSkew = TimeSpan.FromMinutes(1)
                 };
             });
 
@@ -65,6 +71,8 @@ namespace FantasyCup
             services.AddScoped<ILeagueService, LeagueService>();
             services.AddScoped<IBetService, BetService>();
             services.AddScoped<ICompetitionService, CompetitionService>();
+            services.AddScoped<IConfigService, ConfigService>();
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

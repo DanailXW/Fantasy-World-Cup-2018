@@ -1,0 +1,44 @@
+﻿<div class="container-fluid p-4">
+    <div *ngFor="let game of filtered_games; let i = index;">
+        <div *ngIf="i == 0 || (game.startDate | date: 'shortDate') != (filtered_games[i - 1].startDate | date: 'shortDate')" class="row mb-3 p-1" style="background-color: #eee;">
+            <span>
+                {{game.startDate | date: 'EEEE d MMMM'}}
+            </span>
+        </div>
+        <div class="row mb-2">
+            <div class="col-sm-4">
+                <div>
+                    <span>{{game.stage}}</span>
+                </div>
+                <div *ngIf="game.state == 'Finished' || game.state == 'In Progress'">
+                    <span>{{game.startDate | date: 'HH:mm'}}</span>
+                </div>                
+            </div>            
+            <div class="col-sm-1">
+                <span>
+                    <img src={{game.teamA.emblemPath}} />
+                </span>
+            </div>
+            <div class="col-sm-1">
+                <span>{{game.teamA.name}}</span>
+            </div>
+            <div class="col-sm-1" *ngIf="game.state != 'Finished' && game.state != 'In Progress'">
+                <span>{{game.startDate | date: 'HH:mm'}}</span>
+            </div>
+            <div class="col-sm-1" *ngIf="game.state == 'Finished'">
+                <span>{{game.result[0].scoreA}} : {{game.result[0].scoreB}}</span>
+            </div>
+            <div class="col-sm-1" *ngIf="game.state == 'In Progress'">
+                <span>LIVE</span>
+            </div>
+            <div class="col-sm-1">
+                <span>{{game.teamB.name}}</span>
+            </div>
+            <div class="col-sm-1">
+                <span>
+                    <img src={{game.teamB.emblemPath}} />
+                </span>
+            </div>                     
+        </div>
+    </div>
+</div>

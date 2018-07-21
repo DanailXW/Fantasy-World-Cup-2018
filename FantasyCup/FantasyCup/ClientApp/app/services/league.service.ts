@@ -1,69 +1,60 @@
 ﻿import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions, Response } from '@angular/http';
 
-import { AppConfig } from '../app.config';
 import { League, LeagueMember } from '../models/index';
+import { ApiService } from './api.service';
 
 @Injectable()
 export class LeagueService {
 
     constructor(
-        private http: Http,
-        private config: AppConfig
+        private apiService: ApiService
     ) { }
 
-    getAll() {
-        return this.http.get(this.config.apiUrl + '/api/leagues', this.jwt()).map((response: Response) => response.json());
-    }
-
     getJoined() {
-        return this.http.get(this.config.apiUrl + '/api/leagues/entered', this.jwt()).map((response: Response) => response.json());
+        return this.apiService.http_get('/api/leagues/entered', true);
     }
 
     get(id: string) {
-        return this.http.get(this.config.apiUrl + '/api/leagues/' + id, this.jwt()).map((response: Response) => response.json());
+        return this.apiService.http_get('/api/leagues/' + id, true);
+    }
+
+    getDefault() {
+        return this.apiService.http_get('/api/leagues/default', true);
     }
 
     create(league: League) {
-        return this.http.post(this.config.apiUrl + '/api/leagues/create', league, this.jwt());
+        return this.apiService.http_post('/api/leagues/create', league, true);
     }
 
     update(league: League) {
-        return this.http.post(this.config.apiUrl + '/api/leagues/update', league, this.jwt());
+        return this.apiService.http_post('/api/leagues/update', league, true);
+    }
+
+    delete(league: League) {
+        return this.apiService.http_post('/api/leagues/delete', league, true);
     }
 
     join(league: League) {
-        return this.http.post(this.config.apiUrl + '/api/leagues/join', league, this.jwt());
+        return this.apiService.http_post('/api/leagues/join', league, true);
     }
 
     leave(id: string) {
-        return this.http.post(this.config.apiUrl + '/api/leagues/leave/' + id, null, this.jwt());
+        return this.apiService.http_post('/api/leagues/leave/' + id, null, true);
     }
 
     find(league: League) {
-        return this.http.post(this.config.apiUrl + '/api/leagues/find', league, this.jwt());
+        return this.apiService.http_post('/api/leagues/find', league, true);
     }
 
     getMembers(id: string) {
-        return this.http.get(this.config.apiUrl + '/api/leagues/' + id + '/members', this.jwt());
+        return this.apiService.http_get('/api/leagues/' + id + '/members', true);
     }
 
     updateMembers(leagueId: string, members: LeagueMember[]) {
-        return this.http.post(this.config.apiUrl + '/api/leagues/' + leagueId + '/members/update', members, this.jwt());    
+        return this.apiService.http_post('/api/leagues/' + leagueId + '/members/update', members, true);
     }
 
-
-    private jwt() {
-        // create authorization header with jwt token
-        let userFromStorage = localStorage.getItem('FantasyUser');
-        let currentUser;
-
-        if (userFromStorage)
-            currentUser = JSON.parse(userFromStorage);
-
-        if (currentUser && currentUser.token) {
-            let headers = new Headers({ 'Authorization': 'Bearer ' + currentUser.token });
-            return new RequestOptions({ headers: headers });
-        }
+    getLeaderboard(leagueId: string) {
+        return this.apiService.http_get('/api/leagues/' + leagueId + '/standings', true);
     }
 }

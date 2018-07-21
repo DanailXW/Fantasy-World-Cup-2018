@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { User } from '../../models/index';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 import { AuthenticationService } from '../../services/index';
 
 @Component({
@@ -7,15 +8,18 @@ import { AuthenticationService } from '../../services/index';
     templateUrl: './home.component.html'
 })
 export class HomeComponent {
-    currentUser: User;
 
-    constructor(private authService: AuthenticationService) {
-        let userFromStorage = localStorage.getItem('FantasyUser');
-        if (userFromStorage)
-            this.currentUser = JSON.parse(userFromStorage);
+    bLoggedIn$: Observable<boolean>;
+
+    constructor(private authService: AuthenticationService, private router: Router) {
+        
     }
 
-    logout(event: Event) {
-        this.authService.logout();
+    ngOnInit() {        
+        this.bLoggedIn$ = this.authService.isLoggedIn();
+    }
+
+    register() {
+        this.router.navigate(['register']);
     }
 }

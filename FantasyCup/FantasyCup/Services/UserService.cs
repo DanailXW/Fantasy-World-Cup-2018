@@ -10,7 +10,9 @@ namespace FantasyCup.Services
     public interface IUserService
     {
         User Authenticate(string username, string password);
-        User Create(User user, string password);
+        User Create(User user, string password, string refreshToken);
+        void SaveRefreshToken(int userId, string token);
+        bool VerifyRefreshToken(int userId, string token);
     }
 
     public class UserService : IUserService
@@ -41,7 +43,7 @@ namespace FantasyCup.Services
             return user;
         }
 
-        public User Create(User user, string password)
+        public User Create(User user, string password, string refreshToken)
         {
             // validation
             if (string.IsNullOrWhiteSpace(password))
@@ -58,6 +60,7 @@ namespace FantasyCup.Services
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+            user.RefreshToken = refreshToken;
 
             _context.User.Add(user);
             _context.SaveChanges();
@@ -94,6 +97,24 @@ namespace FantasyCup.Services
             }
 
             return true;
+        }
+
+        public void SaveRefreshToken(int userId, string token)
+        {
+            var user = _context.User.SingleOrDefault(x => x.Id == userId);
+
+            // check if username exists
+            if (user == null)
+                throw new FantasyException("User doesn't exist");
+
+            user.RefreshToken = token;
+            _context.User.Update(user);
+            _context.SaveChanges();
+        }
+
+        public bool VerifyRefreshToken(int userId, string token)
+        {
+            return _context.User.Any(x => x.Id == userId && "Bearer " + x.RefreshToken == token);
         }
     }
 }

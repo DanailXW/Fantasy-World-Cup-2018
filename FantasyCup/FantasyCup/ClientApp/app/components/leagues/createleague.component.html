@@ -1,19 +1,26 @@
-﻿<div class="col-md-6 col-md-offset-3">
-    <form *ngIf="!created" name="form" (ngSubmit)="createleague()" novalidate>
-        <div class="form-group">
+﻿<div class="col-md-12 col-md-offset-3 mt-5">
+    <form *ngIf="!created" name="form" (ngSubmit)="f.valid && createleague()" novalidate #f="ngForm">
+        <div class="form-group col-md-6">
             <label for="name">League Name:</label>
-            <input type="text" class="form-control" name="leaguename" [(ngModel)]="model.name" required />
+            <input type="text" name="leaguename" [(ngModel)]="model.name" #LeagueName="ngModel"
+                   class="form-control" [ngClass]="{'fcRequired': f.submitted && LeagueName.invalid}"
+                   required />
         </div>
-        <div class="form-group">
+        <div class="form-group col-md-6">
             <label class="form-check-label">
                 <input type="checkbox" name="bPotMoney" [(ngModel)]="model.hasPotMoney">
-                Entry money?
-            </label>
-            <input *ngIf="model.hasPotMoney" type="text" name="amount" [(ngModel)]="model.potAmount" />
+                Entry fee?
+            </label>            
         </div>
-        <div class="form-group">
+        <div class="form-group col-md-6" *ngIf="model.hasPotMoney">
+            <label for="LeagueAmount">Amount:</label>
+            <input type="number" min="0" name="LeagueAmount" [(ngModel)]="model.potAmount" #LeagueAmount="ngModel"
+                   class="form-control col-md-2" [ngClass]="{'fcRequired': f.submitted && LeagueAmount.invalid}"
+                   [required]="model.hasPotMoney" />
+        </div>
+        <div class="form-group col-md-1">
             <button type="submit" class="btn btn-primary">Create</button>
         </div>
     </form>
-    <p *ngIf="created">The access code for this league is: {{model.code}}</p>
+    <p *ngIf="created">The access code for this league is: {{model.code}}. Send it to other people joining the league.</p>
 </div>

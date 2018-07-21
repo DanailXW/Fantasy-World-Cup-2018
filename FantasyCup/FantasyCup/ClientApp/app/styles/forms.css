@@ -1,0 +1,11 @@
+﻿.fcInvalid {
+    border: 2px solid #a94442; /* red */
+}
+
+.fcRequired {
+    border-left: 2px solid #a94442; /* red */
+}
+
+input[type="checkbox"]:focus {
+    outline: none;
+}

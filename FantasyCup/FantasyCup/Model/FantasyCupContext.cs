@@ -10,7 +10,10 @@ namespace FantasyCup.Model
         public virtual DbSet<Competition> Competition { get; set; }
         public virtual DbSet<CompetitionUserBet> CompetitionUserBet { get; set; }
         public virtual DbSet<Game> Game { get; set; }
+        public virtual DbSet<GameState> GameState { get; set; }
         public virtual DbSet<GameUserBet> GameUserBet { get; set; }
+        public virtual DbSet<Goal> Goal { get; set; }
+        public virtual DbSet<GoalType> GoalType { get; set; }
         public virtual DbSet<League> League { get; set; }
         public virtual DbSet<LeagueUser> LeagueUser { get; set; }
         public virtual DbSet<Player> Player { get; set; }
@@ -23,19 +26,15 @@ namespace FantasyCup.Model
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserBet> UserBet { get; set; }
 
+        //custom types
+        public virtual DbSet<UserScore> UserScore { get; set; }
+        public virtual DbSet<GroupStandings> GroupStandings { get; set; }
+        public virtual DbSet<GameUserBetAssoc> GameUserBetAssoc { get; set; }
+
         public FantasyCupContext() { }
 
         public FantasyCupContext(DbContextOptions<FantasyCupContext> options) : base(options)
         { }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer(@"Server=HOODAHELL-PC\MSSQL16;Database=FantasyCup;Trusted_Connection=True");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -94,6 +93,12 @@ namespace FantasyCup.Model
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Game_Stage");
 
+                entity.HasOne(d => d.State)
+                    .WithMany(p => p.Game)
+                    .HasForeignKey(d => d.StateId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Game_GameState");
+
                 entity.HasOne(d => d.TeamA)
                     .WithMany(p => p.GameTeamA)
                     .HasForeignKey(d => d.TeamAid)
@@ -105,6 +110,14 @@ namespace FantasyCup.Model
                     .HasForeignKey(d => d.TeamBid)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Game_TeamB");
+            });
+
+            modelBuilder.Entity<GameState>(entity =>
+            {
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<GameUserBet>(entity =>
@@ -127,6 +140,37 @@ namespace FantasyCup.Model
                     .WithMany(p => p.GameUserBet)
                     .HasForeignKey(d => d.WinningTeamId)
                     .HasConstraintName("FK_GameUserBet_Team");
+            });
+
+            modelBuilder.Entity<Goal>(entity =>
+            {
+                entity.Property(e => e.Minute)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Player)
+                    .WithMany(p => p.Goal)
+                    .HasForeignKey(d => d.PlayerId)
+                    .HasConstraintName("FK_Goal_Player");
+
+                entity.HasOne(d => d.Result)
+                    .WithMany(p => p.Goal)
+                    .HasForeignKey(d => d.ResultId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Goal_Result");
+
+                entity.HasOne(d => d.Type)
+                    .WithMany(p => p.Goal)
+                    .HasForeignKey(d => d.TypeId)
+                    .HasConstraintName("FK_Goal_GoalType");
+            });
+
+            modelBuilder.Entity<GoalType>(entity =>
+            {
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<League>(entity =>
@@ -220,6 +264,8 @@ namespace FantasyCup.Model
 
             modelBuilder.Entity<Team>(entity =>
             {
+                entity.Property(e => e.EmblemPath).HasMaxLength(500);
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(500);
@@ -234,6 +280,10 @@ namespace FantasyCup.Model
                 entity.Property(e => e.PasswordHash).IsRequired();
 
                 entity.Property(e => e.PasswordSalt).IsRequired();
+
+                entity.Property(e => e.RefreshToken)
+                    .IsRequired()
+                    .IsUnicode(false);
 
                 entity.Property(e => e.UserName)
                     .IsRequired()
@@ -255,6 +305,24 @@ namespace FantasyCup.Model
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserBet_User");
+            });
+
+            modelBuilder.Entity<UserScore>(entity => { entity.HasKey(e => e.Id); });
+
+            modelBuilder.Entity<GroupStandings>(entity =>
+            {
+                entity.HasKey(e => e.TeamId);
+
+                entity.HasOne(d => d.Team).WithMany(p => p.GroupStandings).HasForeignKey(d => d.TeamId);
+                entity.HasOne(d => d.Stage).WithMany(p => p.GroupStandings).HasForeignKey(d => d.StageId);
+            });
+
+            modelBuilder.Entity<GameUserBetAssoc>(entity =>
+            {
+                entity.HasKey(e => new { e.GameId, e.UserId });
+
+                entity.HasOne(d => d.Game).WithMany(p => p.GameUserBetAssoc).HasForeignKey(d => d.GameId);
+                entity.HasOne(d => d.User).WithMany(p => p.GameUserBetAssoc).HasForeignKey(d => d.UserId);
             });
         }
     }

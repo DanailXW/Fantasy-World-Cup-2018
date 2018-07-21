@@ -1,0 +1,26 @@
+﻿<div class="col-sm-6 mt-3">
+    <table class="table table-bordered table-hover table-sm">
+        <thead class="thead-light">
+            <tr>
+                <th>User</th>
+                <th>Prediction</th>
+                <th>Placed at</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let bet of bets; let i = index;">
+                <td>{{bet.userName}}</td>
+                <td>{{bet.scoreA}} - {{bet.scoreB}}</td>
+                <td>{{bet.placeDate | date: 'd MMM HH:mm:ss'}}</td>
+                <td>
+                    <span *ngIf="bet.game.state == 'Finished'">
+                        <i *ngIf="!bet.correctSign" class="fa fa-times-circle" style="font-size: 36px; color:red;"></i>
+                        <i *ngIf="bet.correctScore" class="fa fa-check-circle" style="font-size: 36px; color:green;"></i>
+                        <i *ngIf="bet.correctSign && !bet.correctScore" class="fa fa-check-circle-o" style="font-size: 36px; color:green;"></i>
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

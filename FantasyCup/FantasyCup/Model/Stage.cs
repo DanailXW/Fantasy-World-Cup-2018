@@ -8,6 +8,7 @@ namespace FantasyCup.Model
         public Stage()
         {
             Game = new HashSet<Game>();
+            GroupStandings = new HashSet<GroupStandings>();
         }
 
         public int Id { get; set; }
@@ -18,5 +19,6 @@ namespace FantasyCup.Model
         public Competition Competition { get; set; }
         public StageType StageType { get; set; }
         public ICollection<Game> Game { get; set; }
+        public ICollection<GroupStandings> GroupStandings { get; set; }
     }
 }

@@ -13,7 +13,7 @@ using AutoMapper;
 
 namespace FantasyCup.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Access")]
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class LeaguesController : Controller
@@ -32,7 +32,7 @@ namespace FantasyCup.Controllers
         public IActionResult GetAll()
         {
             var leagues = _leagueService.GetAll();
-            var leagueDtos = _mapper.Map<IList<LeagueDto>>(leagues);
+            var leagueDtos = _mapper.Map<IList<LeagueDtoSecure>>(leagues);
 
             return Ok(leagueDtos);
         }
@@ -42,7 +42,7 @@ namespace FantasyCup.Controllers
         {
             int userId = Convert.ToInt32(User.Identity.Name);
             var leagues = _leagueService.GetLeaguesByUserId(userId);
-            var leagueDtos = _mapper.Map<IList<LeagueDto>>(leagues);
+            var leagueDtos = _mapper.Map<IList<LeagueUserInfoDto>>(leagues);
 
             return Ok(leagueDtos);
         }
@@ -63,6 +63,22 @@ namespace FantasyCup.Controllers
             }
         }
 
+        [HttpGet("default")]
+        public IActionResult GetDefault()
+        {
+            try
+            {
+                var league = _leagueService.GetDefaultLeague();
+                var leagueDto = _mapper.Map<LeagueDtoSecure>(league);
+
+                return Ok(leagueDto);
+            }
+            catch (FantasyException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("find")]
         public IActionResult Find([FromBody]LeagueDto leagueDto)
         {
@@ -74,8 +90,7 @@ namespace FantasyCup.Controllers
             catch(FantasyException ex)
             {
                 return BadRequest(ex.Message);
-            }
-            
+            }            
         }
 
         [HttpPost("create")]
@@ -105,6 +120,21 @@ namespace FantasyCup.Controllers
                 return Ok();
             }
             catch (FantasyException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("delete")]
+        public IActionResult Delete([FromBody]LeagueDto leagueDto)
+        {
+            var league = _mapper.Map<League>(leagueDto);
+            try
+            {
+                _leagueService.Delete(league.Id, Convert.ToInt32(User.Identity.Name));
+                return Ok();
+            }
+            catch(FantasyException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -166,6 +196,22 @@ namespace FantasyCup.Controllers
                 return Ok();
             }
             catch(FantasyException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{leagueId:int}/standings")]
+        public IActionResult GetStandings([FromRoute]int leagueId)
+        {
+            try
+            {
+                var leaderboard = _leagueService.GetLeaderboard(Convert.ToInt32(User.Identity.Name), leagueId);
+                var leaderboardDto = _mapper.Map<IList<UserScoreDto>>(leaderboard);
+
+                return Ok(leaderboardDto);
+            }
+            catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }

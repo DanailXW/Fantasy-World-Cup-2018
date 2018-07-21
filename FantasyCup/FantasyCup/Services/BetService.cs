@@ -11,8 +11,10 @@ namespace FantasyCup.Services
     public interface IBetService
     {
         void PlaceBetGameResult(int userId, GameUserBet[] bets);
-        void PlaceBetCompetition(int userId, int competitionId, string betType, int selectionId);
-        IEnumerable<Game> GetGamesToBet(int userId);
+        void PlaceBetCompetition(int userId, int competitionId, CompetitionUserBet[] userBets);
+        IEnumerable<GameUserBetAssoc> GetGamesToBet(int userId);
+        IEnumerable<CompetitionUserBet> GetCompetitionBets(int userId, int competitionId);
+        IEnumerable<GameUserBetAssoc> GetOthersBets(int userId, int gameId);
     }
 
     public class BetService : IBetService
@@ -39,61 +41,72 @@ namespace FantasyCup.Services
                                         .ThenInclude(x => x.StageType)
                                     .FirstOrDefault(x => x.Id == bet.GameId);
 
-                if (game.StartDate < DateTime.Now)
+                if (game.StartDate < DateTime.UtcNow)
                     throw new FantasyException("Betting after the game start is not allowed");
-                if (bet.ScoreA == -1 || bet.ScoreB == -1)
-                    throw new FantasyException("Missing score value");
                 if (game.Stage.StageType.Name == "Elimination" && bet.ScoreA == bet.ScoreB && bet.WinningTeamId == -1)
-                    throw new FantasyException("You need to specify which team will progress");
-
-                var userBet = _context.GameUserBet.FirstOrDefault(x => x.UserId == userId && x.GameId == game.Id);
-
-                if (userBet == null)
+                    throw new FantasyException("You need to specify which team will progress in case of draw");
+                if (bet.ScoreA == -1 && bet.ScoreB == -1) //prediction is deleted
                 {
-                    userBet = new GameUserBet();
-                    userBet.UserId = userId;
-                    userBet.GameId = game.Id;
-                    userBet.ScoreA = bet.ScoreA;
-                    userBet.ScoreB = bet.ScoreB;
-                    userBet.PlaceDate = DateTime.Now;
+                    var userBet = _context.GameUserBet.FirstOrDefault(x => x.UserId == userId && x.GameId == game.Id);
+                    if (userBet != null)
+                        _context.GameUserBet.Remove(userBet);
 
-                    if (game.Stage.StageType.Name == "Elimination")
-                    {
-                        if (bet.ScoreA == bet.ScoreB)
-                            userBet.WinningTeamId = bet.WinningTeamId;
-                        else
-                            userBet.WinningTeamId = (bet.ScoreA > bet.ScoreB) ? game.TeamAid : game.TeamBid;
-                    }
-
-                    _context.GameUserBet.Add(userBet);
                 }
                 else
                 {
-                    if (userBet.ScoreA != bet.ScoreA || userBet.ScoreB != bet.ScoreB)
+                    if (bet.ScoreA < 0 || bet.ScoreB < 0)
+                        throw new FantasyException("Invalid score");
+
+                    var userBet = _context.GameUserBet.FirstOrDefault(x => x.UserId == userId && x.GameId == game.Id);
+
+                    if (userBet == null)
                     {
+                        userBet = new GameUserBet();
+                        userBet.UserId = userId;
+                        userBet.GameId = game.Id;
                         userBet.ScoreA = bet.ScoreA;
                         userBet.ScoreB = bet.ScoreB;
-                        userBet.PlaceDate = DateTime.Now;
-                    }
+                        userBet.PlaceDate = DateTime.UtcNow;
 
-                    if (game.Stage.StageType.Name == "Elimination")
-                    {
-                        var teamId = userBet.WinningTeamId;
-                        if (bet.ScoreA == bet.ScoreB)
-                            teamId = bet.WinningTeamId;
-                        else
-                            teamId = (bet.ScoreA > bet.ScoreB) ? game.TeamAid : game.TeamBid;
-
-                        if (teamId != userBet.WinningTeamId)
+                        if (game.Stage.StageType.Name == "Elimination")
                         {
-                            userBet.WinningTeamId = teamId;
-                            userBet.PlaceDate = DateTime.Now;
+                            if (bet.ScoreA == bet.ScoreB)
+                                userBet.WinningTeamId = bet.WinningTeamId;
+                            else
+                                userBet.WinningTeamId = null;
                         }
-                    }
 
-                    if (_context.Entry(userBet).State != EntityState.Unchanged)
-                        _context.GameUserBet.Update(userBet);
+                        _context.GameUserBet.Add(userBet);
+                    }
+                    else
+                    {
+                        if (userBet.ScoreA != bet.ScoreA || userBet.ScoreB != bet.ScoreB)
+                        {
+                            userBet.ScoreA = bet.ScoreA;
+                            userBet.ScoreB = bet.ScoreB;
+                            userBet.PlaceDate = DateTime.UtcNow;
+                        }
+
+                        if (game.Stage.StageType.Name == "Elimination")
+                        {
+                            var teamId = userBet.WinningTeamId;
+                            if (bet.ScoreA == bet.ScoreB)
+                                teamId = bet.WinningTeamId;
+                            else
+                                teamId = null;
+
+                            if (teamId != userBet.WinningTeamId)
+                            {
+                                userBet.WinningTeamId = teamId;
+                                userBet.PlaceDate = DateTime.UtcNow;
+                            }
+                        }
+
+                        if (_context.Entry(userBet).State != EntityState.Unchanged)
+                            _context.GameUserBet.Update(userBet);
+                    }
                 }
+                
             }
 
 
@@ -101,81 +114,117 @@ namespace FantasyCup.Services
 
         }
 
-        public void PlaceBetCompetition(int userId, int competitionId, string betType, int selectionId)
+        public void PlaceBetCompetition(int userId, int competitionId, CompetitionUserBet[] userBets)
         {
             if(!_context.User.Any(x => x.Id == userId))
                 throw new FantasyException("User not found");
             if (!_context.Competition.Any(x => x.Id == competitionId))
                 throw new FantasyException("Competition not found");
-            if (!_context.BetType.Any(x => x.Name == betType))
-                throw new FantasyException("Unsupported bet type");
 
             var finalDate = _context.Competition.Single(x => x.Id == competitionId).EndDate;
             if (_context.Game.Any(x => x.Stage.CompetitionId == competitionId && x.StartDate > finalDate))
                 finalDate = _context.Game.Where(x => x.Stage.CompetitionId == competitionId).Max(x => x.StartDate);
 
-            if (finalDate < DateTime.Now)
+            if (finalDate < DateTime.UtcNow)
                 throw new FantasyException("Placing a competition bet after the final game start is not allowed");
 
-            if (betType == "COMPETITION_CHAMPION")
+            foreach (var bet in userBets)
             {
-                if (!_context.Team.Any(x => x.Id == selectionId))
-                    throw new FantasyException("Team not found");
+                if (!_context.BetType.Any(x => x.Name == bet.BetType.Name))
+                    throw new FantasyException("Unsupported bet type");                
+
+                if (bet.BetType.Name == "COMPETITION_CHAMPION")
+                {
+                    if (!_context.Team.Any(x => x.Id == bet.SelectionId))
+                        throw new FantasyException("Team not found");
+                }
+                else
+                {
+                    if (!_context.Player.Any(x => x.Id == bet.SelectionId))
+                        throw new FantasyException("Player not found");
+                }
+
+                var betTypeId = _context.BetType.Single(x => x.Name == bet.BetType.Name).Id;
+                var userBet = _context.CompetitionUserBet.FirstOrDefault(x => x.UserId == userId && x.CompetitionId == competitionId && x.BetTypeId == betTypeId);
+
+                if (userBet == null)
+                {
+                    userBet = new CompetitionUserBet();
+                    userBet.UserId = userId;
+                    userBet.CompetitionId = competitionId;
+                    userBet.BetTypeId = betTypeId;
+                    userBet.PlaceDate = DateTime.UtcNow;
+                    userBet.SelectionId = bet.SelectionId;
+
+                    _context.CompetitionUserBet.Add(userBet);
+                }
+                else if (userBet.SelectionId != bet.SelectionId)
+                {
+                    userBet.PlaceDate = DateTime.UtcNow;
+                    userBet.SelectionId = bet.SelectionId;
+
+                    _context.CompetitionUserBet.Update(userBet);
+                }
             }
-            else
-            {
-                if (!_context.Player.Any(x => x.Id == selectionId))
-                    throw new FantasyException("Player not found");
-            }
-
-            var betTypeId = _context.BetType.Single(x => x.Name == betType).Id;
-            var userBet = _context.CompetitionUserBet.FirstOrDefault(x => x.UserId == userId && x.CompetitionId == competitionId && x.BetTypeId == betTypeId);
-
-            if (userBet == null)
-            {
-                userBet = new CompetitionUserBet();
-                userBet.UserId = userId;
-                userBet.CompetitionId = competitionId;
-                userBet.BetTypeId = betTypeId;
-                userBet.PlaceDate = DateTime.Now;
-                userBet.SelectionId = selectionId;
-
-                _context.CompetitionUserBet.Add(userBet);
-            }
-            else if (userBet.SelectionId != selectionId)
-            {
-                userBet.PlaceDate = DateTime.Now;
-                userBet.SelectionId = selectionId;
-
-                _context.CompetitionUserBet.Update(userBet);
-            }
-
+            
             _context.SaveChanges();
         }
 
 
-        public IEnumerable<Game> GetGamesToBet(int userId)
+        public IEnumerable<GameUserBetAssoc> GetGamesToBet(int userId)
         {
-            return _context.Game
-                            .Include(x => x.TeamA)
-                            .Include(x => x.TeamB)
-                            .Include(x => x.GameUserBet)
-                            .Include(x => x.Stage)
-                                .ThenInclude(x => x.StageType)
-                            .AsNoTracking()
-                            .SelectMany(
-                                    collectionSelector: game => game.GameUserBet.Where(x => x.UserId == userId).DefaultIfEmpty(),
-                                    resultSelector: (game, userbet) => new Game {
-                                        Id = game.Id,
-                                        Result = game.Result,
-                                        Stage = game.Stage,
-                                        TeamA = game.TeamA,
-                                        TeamAid = game.TeamAid,
-                                        TeamB = game.TeamB,
-                                        TeamBid = game.TeamBid,
-                                        StartDate = game.StartDate,
-                                        GameUserBet = new List<GameUserBet>() { userbet }
-                                    });
+            return _context.GameUserBetAssoc.FromSql("SELECT * FROM dbo.utfn_getGameUserBet(" + userId.ToString() + ")")
+                                            .Include(x => x.Game)
+                                                .ThenInclude(x => x.TeamA)
+                                            .Include(x => x.Game)
+                                                .ThenInclude(x => x.TeamB)
+                                            .Include(x => x.Game)
+                                                .ThenInclude(x => x.Stage)
+                                                    .ThenInclude(x => x.StageType)
+                                            .Include(x => x.Game)
+                                                .ThenInclude(x => x.State);
+            //return _context.Game
+            //                .Include(x => x.TeamA)
+            //                .Include(x => x.TeamB)
+            //                .Include(x => x.GameUserBet)
+            //                .Include(x => x.Stage)
+            //                    .ThenInclude(x => x.StageType)
+            //                .AsNoTracking()
+            //                .SelectMany(
+            //                        collectionSelector: game => game.GameUserBet.Where(x => x.UserId == userId).DefaultIfEmpty(),
+            //                        resultSelector: (game, userbet) => new Game
+            //                        {
+            //                            Id = game.Id,
+            //                            Result = game.Result,
+            //                            Stage = game.Stage,
+            //                            TeamA = game.TeamA,
+            //                            TeamAid = game.TeamAid,
+            //                            TeamB = game.TeamB,
+            //                            TeamBid = game.TeamBid,
+            //                            StartDate = game.StartDate,
+            //                            GameUserBet = new List<GameUserBet>() { userbet }
+            //                        });
+
+        }
+
+        public IEnumerable<CompetitionUserBet> GetCompetitionBets(int userId, int competitionId)
+        {
+            return _context.CompetitionUserBet.Include(x => x.BetType).Where(x => x.UserId == userId);
+        }
+
+        public IEnumerable<GameUserBetAssoc> GetOthersBets(int userId, int gameId)
+        {
+            if (!_context.User.Any(x => x.Id == userId))
+                throw new FantasyException("User not found");
+
+            var game = _context.Game.Find(gameId);
+            if (game.StartDate > DateTime.UtcNow)
+                throw new FantasyException("You can't view other players' bets before the game has started.");
+
+            return _context.GameUserBetAssoc.FromSql("SELECT * FROM dbo.vw_GameUserBet WHERE GameId = " + gameId.ToString() + " AND UserId <> " + userId.ToString())
+                                            .Include(x => x.User)
+                                            .Include(x => x.Game)
+                                                .ThenInclude(x => x.State);
         }
     }
 }

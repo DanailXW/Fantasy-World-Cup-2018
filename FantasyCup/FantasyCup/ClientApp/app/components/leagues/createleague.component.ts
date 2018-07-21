@@ -3,7 +3,8 @@ import { LeagueService, AlertService } from '../../services/index';
 
 @Component({
     selector: 'createleague',
-    templateUrl: './createleague.component.html'
+    templateUrl: './createleague.component.html',
+    styleUrls: ['../../styles/forms.css']
 })
 export class CreateLeagueComponent {
     model: any = {};
@@ -15,6 +16,7 @@ export class CreateLeagueComponent {
         this.leagueService.create(this.model)
             .subscribe(
             data => {
+                
                 this.model.code = data.json().code;
                 this.created = true;
             },

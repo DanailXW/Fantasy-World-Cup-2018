@@ -2,3 +2,4 @@
 export * from './joinleague.component';
 export * from './createleague.component';
 export * from './manageleague.component';
+export * from './leaguestandings.component';

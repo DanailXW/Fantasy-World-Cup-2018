@@ -1,35 +1,30 @@
 ﻿import { Injectable } from '@angular/core';
-import { Http, Headers, RequestOptions, Response } from '@angular/http';
-
-import { AppConfig } from '../app.config';
+import { ApiService } from './api.service';
 
 @Injectable()
 export class BetService {
 
     constructor(
-        private http: Http,
-        private config: AppConfig
+        private api: ApiService
     ) { }
 
     getGames() {
-        return this.http.get(this.config.apiUrl + '/api/bets/games', this.jwt()).map((response: Response) => response.json());
+        return this.api.http_get('/api/bets/games', true);
     }
 
     placeGameBets(gameBets: any) {
-        return this.http.post(this.config.apiUrl + '/api/bets/games/place', gameBets, this.jwt());
+        return this.api.http_post('/api/bets/games/place', gameBets, true);
     }
 
-    private jwt() {
-        // create authorization header with jwt token
-        let userFromStorage = localStorage.getItem('FantasyUser');
-        let currentUser;
+    getCompetitionBets() {
+        return this.api.http_get('/api/bets/1/competitionbets', true);
+    }
 
-        if (userFromStorage)
-            currentUser = JSON.parse(userFromStorage);
+    placeCompetitionBets(competitionBets: any) {
+        return this.api.http_post('/api/bets/1/place', competitionBets, true);
+    }
 
-        if (currentUser && currentUser.token) {
-            let headers = new Headers({ 'Authorization': 'Bearer ' + currentUser.token });
-            return new RequestOptions({ headers: headers });
-        }
+    getOthersBets(gameId: string) {
+        return this.api.http_get('/api/bets/game/' + gameId + '/others', true);
     }
 }

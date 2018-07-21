@@ -1,0 +1,15 @@
+﻿[data-toggle="collapse"] .fa:before {
+    content: "\f107";
+    margin-right: 3px;
+    margin-left: 5px;
+}
+
+[data-toggle="collapse"].collapsed .fa:before {
+    content: "\f105";
+    margin-right: 3px;
+    margin-left: 5px;
+}
+
+[data-toggle="collapse"] {
+    color: black;
+}

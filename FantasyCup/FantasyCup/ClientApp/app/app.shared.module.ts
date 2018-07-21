@@ -3,27 +3,35 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { NgxPaginationModule } from 'ngx-pagination';
+import { ToastrModule, ToastrConfig, ToastrService } from 'ngx-toastr';
 
 import { AppComponent } from './components/app/app.component';
 import { AppConfig } from './app.config';
 
-import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { HomeComponent } from './components/home/home.component';
-import { FetchDataComponent } from './components/fetchdata/fetchdata.component';
-import { CounterComponent } from './components/counter/counter.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
-import { LeaguesComponent, CreateLeagueComponent, JoinLeagueComponent, ManageLeagueComponent } from './components/leagues/index';
-import { GameBetsComponent } from './components/bet/index';
+import { LeaguesComponent, CreateLeagueComponent, JoinLeagueComponent, ManageLeagueComponent, LeagueStandingsComponent } from './components/leagues/index';
+import { GameBetsComponent, CompetitionBetsComponent, OthersBetsComponent } from './components/bet/index';
+import { PlayerStatsComponent, GamesComponent, GroupStandingsComponent } from './components/competition/index';
+import { RulesComponent } from './components/rules/rules.component';
 
-import { AuthenticationService, AlertService, UserService, LeagueService, BetService } from './services/index';
+import { AuthenticationService } from './services/authentication.service';
+import { ApiService } from './services/api.service';
+import { AlertService, UserService, LeagueService, HomeGuard, AccessGuard, ConfigService } from './services/index';
+import { BetService } from './services/bet.service';
+import { CompetitionService } from './services/competition.service';
+import { TeamResolver, PlayerResolver, CompetitionBetsResolver, GameResolver } from './services/resolver.service';
+
+import { EqualValidator } from './directives/validateEqual.directive';
+
 
 @NgModule({
     declarations: [
         AppComponent,
-        NavMenuComponent,
-        CounterComponent,
-        FetchDataComponent,
         LoginComponent,
         RegisterComponent,
         HomeComponent,
@@ -31,34 +39,65 @@ import { AuthenticationService, AlertService, UserService, LeagueService, BetSer
         CreateLeagueComponent,
         JoinLeagueComponent,
         ManageLeagueComponent,
-        GameBetsComponent
+        LeagueStandingsComponent,
+        GameBetsComponent,
+        CompetitionBetsComponent,
+        OthersBetsComponent,
+        PlayerStatsComponent,
+        GamesComponent,
+        EqualValidator,
+        RulesComponent,
+        GroupStandingsComponent
     ],
     imports: [
         CommonModule,
         HttpModule,
         FormsModule,
+        BrowserModule,
+        NgxPaginationModule,
+        ToastrModule.forRoot({ positionClass: 'toast-top-center', timeOut: 2000 }),
         RouterModule.forRoot([
-            //{ path: '', redirectTo: 'home', pathMatch: 'full' },
-            { path: 'home', component: HomeComponent },
-            { path: 'counter', component: CounterComponent },
-            { path: 'fetch-data', component: FetchDataComponent },
-            { path: 'login', component: LoginComponent },
-            { path: 'register', component: RegisterComponent },
-            { path: 'leagues', component: LeaguesComponent },
-            { path: 'league/create', component: CreateLeagueComponent },
-            { path: 'league/join', component: JoinLeagueComponent },
-            { path: 'league/manage/:id', component: ManageLeagueComponent },
-            { path: 'bet/games', component: GameBetsComponent }
-            //{ path: '**', redirectTo: 'home' }
+            { path: '', component: HomeComponent, canActivate: [HomeGuard] },
+            { path: 'login', component: LoginComponent, canActivate: [HomeGuard] },
+            { path: 'register', component: RegisterComponent, canActivate: [HomeGuard] },
+            { path: 'leagues', component: LeaguesComponent, canActivate: [AccessGuard] },
+            { path: 'league/create', component: CreateLeagueComponent, canActivate: [AccessGuard] },
+            { path: 'league/join', component: JoinLeagueComponent, canActivate: [AccessGuard] },
+            { path: 'league/manage/:id', component: ManageLeagueComponent, canActivate: [AccessGuard] },
+            { path: 'league/standings/:id', component: LeagueStandingsComponent, canActivate: [AccessGuard] },
+            { path: 'bet/games', component: GameBetsComponent, canActivate: [AccessGuard] },
+            { path: 'bet/competition', component: CompetitionBetsComponent, canActivate: [AccessGuard], resolve: { teams: TeamResolver, players: PlayerResolver, bets: CompetitionBetsResolver } },
+            { path: 'game/:id/bets', component: OthersBetsComponent, canActivate: [AccessGuard] },
+            { path: 'playerstats', component: PlayerStatsComponent },
+            {
+                path: 'games', component: GamesComponent, resolve: { games: GameResolver },
+                children: [
+                    { path: 'upcoming', component: GamesComponent},
+                    { path: 'result', component: GamesComponent },
+                    { path: 'group_phase', component: GamesComponent },
+                    { path: 'knockout_phase', component: GamesComponent }
+                ]
+            },
+            { path: 'rules', component: RulesComponent },
+            { path: 'groupstandings', component: GroupStandingsComponent}
         ])
     ],
     providers: [
         AppConfig,
         AlertService,
         AuthenticationService,
+        ApiService,
         UserService,
         LeagueService,
-        BetService
+        BetService,
+        CompetitionService,
+        HomeGuard,
+        AccessGuard,
+        TeamResolver,
+        PlayerResolver,
+        CompetitionBetsResolver,
+        GameResolver,
+        ConfigService
     ]
 })
 export class AppModuleShared {

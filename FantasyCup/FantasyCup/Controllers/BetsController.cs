@@ -13,7 +13,7 @@ using AutoMapper;
 
 namespace FantasyCup.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Access")]
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class BetsController : Controller
@@ -37,7 +37,7 @@ namespace FantasyCup.Controllers
         }
 
         [HttpPost("games/place")]
-        public IActionResult PlaceGameBets([FromBody]IList<GameUserBetDto> gameBetsDto)
+        public IActionResult PlaceGameBets([FromBody]IList<UserBetDto> gameBetsDto)
         {
             try
             {
@@ -45,6 +45,44 @@ namespace FantasyCup.Controllers
                 _betService.PlaceBetGameResult(Convert.ToInt32(User.Identity.Name), gameBets.ToArray());
 
                 return Ok();
+            }
+            catch(FantasyException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{cid:int}/competitionbets")]
+        public IActionResult GetCompetitionBets([FromRoute]int cid)
+        {
+            return Ok(_betService.GetCompetitionBets(Convert.ToInt32(User.Identity.Name), cid));
+        }
+
+        [HttpPost("{cid:int}/place")]
+        public IActionResult PlaceCompetitionBets([FromRoute]int cid, [FromBody]IList<CompetitionUserBetDto> competitionBetsDto)
+        {
+            try
+            {
+                var competitionBets = _mapper.Map<IList<CompetitionUserBet>>(competitionBetsDto);
+                _betService.PlaceBetCompetition(Convert.ToInt32(User.Identity.Name), cid, competitionBets.ToArray());
+
+                return Ok();
+            }
+            catch(FantasyException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("game/{gameId:int}/others")]
+        public IActionResult GetOthersBets([FromRoute]int gameId)
+        {
+            try
+            {
+                var bets = _betService.GetOthersBets(Convert.ToInt32(User.Identity.Name), gameId);
+                var betsDto = _mapper.Map<IList<GameUserBetDto>>(bets);
+
+                return Ok(betsDto);
             }
             catch(FantasyException ex)
             {

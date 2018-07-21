@@ -8,9 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="6.2.2" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
+    <PackageReference Include="AutoMapper" Version="7.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="4.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
+    <PackageReference Include="Microsoft.Net.Compilers" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.2" />
   </ItemGroup>
 
@@ -20,54 +21,89 @@
 
   <ItemGroup>
     <!-- Files not to publish (note that the 'dist' subfolders are re-added below) -->
+    <Compile Remove="ClientApp\app\images\**" />
     <Content Remove="ClientApp\**" />
+    <EmbeddedResource Remove="ClientApp\app\images\**" />
+    <None Remove="ClientApp\app\images\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="ClientApp\app\app.config.ts" />
+    <None Remove="ClientApp\app\components\bet\competitionbets.component.ts" />
     <None Remove="ClientApp\app\components\bet\gamebets.component.ts" />
     <None Remove="ClientApp\app\components\bet\index.ts" />
+    <None Remove="ClientApp\app\components\bet\othersbets.component.ts" />
+    <None Remove="ClientApp\app\components\competition\games.component.ts" />
+    <None Remove="ClientApp\app\components\competition\groupstandings.component.ts" />
+    <None Remove="ClientApp\app\components\competition\index.ts" />
+    <None Remove="ClientApp\app\components\competition\playerstats.component.ts" />
     <None Remove="ClientApp\app\components\leagues\createleague.component.ts" />
     <None Remove="ClientApp\app\components\leagues\index.ts" />
     <None Remove="ClientApp\app\components\leagues\joinleague.component.ts" />
     <None Remove="ClientApp\app\components\leagues\leagues.component.ts" />
+    <None Remove="ClientApp\app\components\leagues\leaguestandings.component.ts" />
     <None Remove="ClientApp\app\components\leagues\manageleague.component.ts" />
     <None Remove="ClientApp\app\components\login\login.component.ts" />
     <None Remove="ClientApp\app\components\register\register.component.ts" />
+    <None Remove="ClientApp\app\components\rules\rules.component.ts" />
+    <None Remove="ClientApp\app\directives\validateEqual.directive.ts" />
     <None Remove="ClientApp\app\models\gamebet.ts" />
     <None Remove="ClientApp\app\models\index.ts" />
     <None Remove="ClientApp\app\models\league.ts" />
     <None Remove="ClientApp\app\models\leaguemember.ts" />
     <None Remove="ClientApp\app\models\user.ts" />
     <None Remove="ClientApp\app\services\alert.service.ts" />
+    <None Remove="ClientApp\app\services\api.service.ts" />
     <None Remove="ClientApp\app\services\authentication.service.ts" />
     <None Remove="ClientApp\app\services\bet.service.ts" />
+    <None Remove="ClientApp\app\services\competition.service.ts" />
+    <None Remove="ClientApp\app\services\config.service.ts" />
+    <None Remove="ClientApp\app\services\guard.service.ts" />
     <None Remove="ClientApp\app\services\index.ts" />
     <None Remove="ClientApp\app\services\league.service.ts" />
+    <None Remove="ClientApp\app\services\resolver.service.ts" />
     <None Remove="ClientApp\app\services\user.service.ts" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="ClientApp\app\styles\forms.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <TypeScriptCompile Include="ClientApp\app\app.config.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\bet\competitionbets.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\bet\othersbets.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\bet\gamebets.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\bet\index.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\competition\groupstandings.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\competition\index.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\competition\playerstats.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\competition\games.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\leagues\createleague.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\leagues\index.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\leagues\joinleague.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\leagues\leagues.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\leagues\leaguestandings.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\leagues\manageleague.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\login\login.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\components\register\register.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\rules\rules.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\directives\validateEqual.directive.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\gamebet.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\index.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\league.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\leaguemember.ts" />
     <TypeScriptCompile Include="ClientApp\app\models\user.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\alert.service.ts" />
+    <TypeScriptCompile Include="ClientApp\app\services\api.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\authentication.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\bet.service.ts" />
+    <TypeScriptCompile Include="ClientApp\app\services\competition.service.ts" />
+    <TypeScriptCompile Include="ClientApp\app\services\config.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\index.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\league.service.ts" />
+    <TypeScriptCompile Include="ClientApp\app\services\guard.service.ts" />
+    <TypeScriptCompile Include="ClientApp\app\services\resolver.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\services\user.service.ts" />
   </ItemGroup>
 

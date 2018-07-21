@@ -11,6 +11,7 @@ namespace FantasyCup.Model
             GameUserBet = new HashSet<GameUserBet>();
             LeagueUser = new HashSet<LeagueUser>();
             UserBet = new HashSet<UserBet>();
+            GameUserBetAssoc = new HashSet<GameUserBetAssoc>();
         }
 
         public int Id { get; set; }
@@ -18,10 +19,12 @@ namespace FantasyCup.Model
         public string EmailAddress { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
+        public string RefreshToken { get; set; }
 
         public ICollection<CompetitionUserBet> CompetitionUserBet { get; set; }
         public ICollection<GameUserBet> GameUserBet { get; set; }
         public ICollection<LeagueUser> LeagueUser { get; set; }
         public ICollection<UserBet> UserBet { get; set; }
+        public ICollection<GameUserBetAssoc> GameUserBetAssoc { get; set; }
     }
 }

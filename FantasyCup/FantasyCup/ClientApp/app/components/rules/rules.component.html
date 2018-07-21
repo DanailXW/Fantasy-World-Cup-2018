@@ -1,0 +1,67 @@
+﻿<div class="container-fluid p-4">
+    <div style="background-color: #eee; margin: 0; padding:5px;">
+        <h5>
+            <a data-toggle="collapse" href="#dPoints" aria-expanded="true">
+                <span class="fa">Points</span>
+            </a>
+        </h5>
+    </div>
+    <div id="dPoints" class="collapse show" style="border: solid 1px #eee; padding:5px;">
+        <p>Points are awarded for the following accomplishments:</p>
+        <ul>
+            <li>
+                Correct prediction for a game:
+                <ul>
+                    <li>Correct Sign(1/X/2) - {{groupPhase[0]?.signPoints}} points in the group phase; {{knockoutPhase[0]?.signPoints}} points in the knockout phase.</li>
+                    <li>Correct Result - {{groupPhase[0]?.scorePoints}} points in the group phase; {{knockoutPhase[0]?.scorePoints}} points in the knockout phase.</li>
+                    <li>Team progressing to next stage (applicable only for elimination games, which end in draw) - {{knockoutPhase[0]?.progressPoints}} points.</li>
+                </ul>
+
+            </li>
+            <li>
+                Correct prediction for the champion of the tournament - the number of awarded points is based on the date of placing the prediction.
+                If placed before the start of the first game, you get the maximum 32 points. If placed on a later date, you get a number of points corresponding to the remaining days of the torunament.
+                You can change your prediction as many times as needed before the start of the final game, only the latest one will count.
+            </li>
+            <li>
+                Correct prediction for the top scorer of the tournament. Points are calculated in the same manner as for the champion.
+                If there are several players with equal number of scored goals, all of them will count as correct predictions (assists or other statistics will not be used to determine a single top scorer).
+                Goals scored in a penalty shootout and own goals do not count.
+            </li>
+        </ul>
+
+    </div>
+    <div style="background-color: #eee; margin: 10px 0px 0px 0px; padding:5px;">
+        <h5>
+            <a data-toggle="collapse" href="#dLeagues" aria-expanded="true" class="collapsed">
+                <span class="fa">Leagues</span>
+            </a>
+        </h5>
+    </div>
+    <div id="dLeagues" class="collapse" style="border: solid 1px #eee; padding:5px;">
+        <p>
+            Upon registration every user becomes a member of the "Overall" league.
+            You can create a private league to contest only against your friends and colleagues. Private leagues are managed by their creators.
+            You can join a league if you were provided with its name and access code.
+        </p>
+    </div>
+    <div style="background-color: #eee; margin: 10px 0px 0px 0px; padding:5px;">
+        <h5>
+            <a data-toggle="collapse" href="#dPrizes" aria-expanded="true" class="collapsed">
+                <span class="fa">Prizes</span>
+            </a>
+        </h5>
+    </div>
+    <div id="dPrizes" class="collapse" style="border: solid 1px #eee; padding:5px; margin-bottom:10px;">
+        <p>
+            You can win a portion of the money in the bank only if you have contributed yourself.
+            The entry fee for the "Overall" league is 10 BGN and it should be submitted before the start of the tournament.
+            The money is awarded to the 3 players who have paid the entry fee and acummulated the most points in the following manner - 1st place - 50%, 2nd place - 30%, 3rd place - 20%.
+            If two or more players finish with equal points, the prize portions are split accordingly.
+            You can participate in the game and appear in the standings without paying any money - in this case your points will be marked in red - if you do well, your prize will be honor.
+        </p>
+        <p>
+            The entry fee amount and distribution of the money in the bank, if any, for a private league should be agreed upon by its members - there are no restrictions imposed by this website.
+        </p>
+    </div>
+</div>

@@ -1,17 +1,18 @@
 ﻿import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { UserService, AlertService } from '../../services/index';
+import { AuthenticationService, AlertService } from '../../services/index';
 
 @Component({
     selector: 'register',
-    templateUrl: './register.component.html'
+    templateUrl: './register.component.html',
+    styleUrls: ['../../styles/forms.css']
 })
 export class RegisterComponent {
     model: any = {};
     returnUrl: string;
 
     constructor(
-        private userService: UserService,
+        private authService: AuthenticationService,
         private alertService: AlertService,
         private router: Router,
         private route: ActivatedRoute,
@@ -22,13 +23,14 @@ export class RegisterComponent {
     }
 
     register() {
-        this.userService.create(this.model)
+        this.authService.create(this.model)
             .subscribe(
-                data => {
+            data => {
+                this.alertService.success('Successful registration. Good luck!');
                     this.router.navigate([this.returnUrl]);
                 },
                 error => {
-                    this.alertService.error(error._body);
+                    this.alertService.error('Registration was not successful');
                 }
             )
     }

@@ -1,27 +1,89 @@
-﻿<div class="col-md-6 col-md-offset-3">
-    <h3>Games:</h3>
-    <form name="form" (ngSubmit)="saveBets()" novalidate>
-        <table>
-            <tr *ngFor="let game of games; let i = index">
-                <td>
-                    {{game.startDate}}
-                </td>
-                <td>
-                    {{game.teamA}}
-                </td>
-                <td>
-                    <input type="number" name="scoreA-{{game.id}}" [(ngModel)]="game.scoreA" (change)="rowChanged(i)">
-                </td>
-                <td>
-                    <input type="number" name="scoreB-{{game.id}}" [(ngModel)]="game.scoreB" (change)="rowChanged(i)"/>
-                </td>
-                <td>
-                    {{game.teamB}}
-                </td>
-            </tr>
-        </table>
+﻿<div class="container-fluid p-4">
+    <form name="form" (ngSubmit)="f.valid && saveBets()" novalidate #f="ngForm">
+        <div *ngFor="let item of games | paginate: { itemsPerPage: pageItemsCount, currentPage: p }; let i = index;">
+            <div *ngIf="i == 0 || (item.game.startDate | date: 'shortDate') != (games[(pageItemsCount * ((p ? p : 1) - 1)) + i - 1].game.startDate | date: 'shortDate')" class="row mb-3 p-1" style="background-color: #eee;">
+                <span>
+                    {{item.game.startDate | date: 'EEEE d MMMM'}}
+                </span>
+            </div>
+            <div class="row mb-2">
+                <div class="col-sm-2">
+                    <div>
+                        <span>{{item.game.stage.name}}</span>
+                    </div>
+                    <div>
+                        <span>{{item.game.startDate | date: 'HH:mm'}}</span>
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <span>
+                        <img src={{item.game.teamA.emblemPath}} />
+                    </span>
+                </div>
+                <div class="col-sm-1">
+                    <span>{{item.game.teamA.name}}</span>
+                </div>
+                <div class="col-sm-1">
+                    <div class="input-group">
+                        <input type="checkbox" *ngIf="item.game.stageType == 'Elimination' && item.scoreA != null && item.scoreB != null && item.scoreA == item.scoreB"
+                               class="form-control" [checked]="item.winningTeamId == item.game.teamA.id"
+                               (change)="progressChecked(item, $event, 'A')"
+                               [disabled]="item.canViewOthersBets"
+                               name="progressA-{{item.game.id}}"
+                               data-toggle="tooltip" title="Progress to next round"
+                               />
+                        <input #scoreA="ngModel" type="number" min="0" name="scoreA-{{item.game.id}}"
+                               class="form-control" [ngClass]="{'fcInvalid': f.submitted && scoreA.invalid}"
+                               [(ngModel)]="item.scoreA" (change)="rowChanged(item)"
+                               disabled={{item.canViewOthersBets}} [required]="(item.scoreA !== null) != (item.scoreB !== null)">
+                    </div>                    
+                </div>
+                <div>
+                    <span *ngIf="item.game.state == 'Finished' && item.scoreA != null">
+                        <i *ngIf="!item.correctSign" class="fa fa-times-circle" style="font-size: 36px; color:red;"></i>
+                        <i *ngIf="item.correctScore" class="fa fa-check-circle" style="font-size: 36px; color:green;"></i>
+                        <i *ngIf="item.correctSign && !item.correctScore" class="fa fa-check-circle-o" style="font-size: 36px; color:green;"></i>
+                    </span>
+                    <span *ngIf="item.game.state != 'Finished' || item.scoreA == null">
+                        <i class="fa fa-times-circle" style="font-size:36px; visibility:hidden;"></i>
+                    </span>
+                </div>
+                <div class="col-sm-1">
+                    <div class="input-group">
+                        <input #scoreB="ngModel" type="number" min="0" name="scoreB-{{item.game.id}}"
+                               class="form-control" [ngClass]="{'fcInvalid': f.submitted && scoreB.invalid}"
+                               [(ngModel)]="item.scoreB" (change)="rowChanged(item)"
+                               disabled={{item.canViewOthersBets}} [required]="(item.scoreA !== null) != (item.scoreB !== null)" />
+                        <input type="checkbox" *ngIf="item.game.stageType == 'Elimination' && item.scoreA != null && item.scoreB != null && item.scoreA == item.scoreB"
+                               class="form-control" [checked]="item.winningTeamId == item.game.teamB.id"
+                               (change)="progressChecked(item, $event, 'B')"
+                               [disabled]="item.canViewOthersBets"
+                               name="progressB-{{item.game.id}}"
+                               data-toggle="tooltip" title="Progress to next round"
+                               />
+                    </div>
+                    
+                </div>
+                <div class="col-sm-1">
+                    <span>{{item.game.teamB.name}}</span>
+                </div>
+                <div class="col-sm-1">
+                    <span>
+                        <img src={{item.game.teamB.emblemPath}} />
+                    </span>
+                </div>
+                <div *ngIf="item.canViewOthersBets" class="col-sm-1">
+                    <button type="button" class="btn btn-default" (click)="viewOthersBets(item.game.id)">
+                        <span class="fa fa-external-link" data-toggle="tooltip" title="View others' bets"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+
         <div class="form-group">
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" class="btn btn-primary" [disabled]="f.pristine">Save</button>
         </div>
     </form>
 </div>
